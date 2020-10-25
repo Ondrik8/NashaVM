@@ -52,15 +52,17 @@ namespace Nasha.CLI.Core
             int Exit = 2;
             int SetBlock = 4;
             int Nothing = 5;
+            int ExitBlock = new Random().Next(256, 1337);
 
             var list = NashaOpcodes.OpcodesList().ToList();
             var blocks = new List<OpcodesBlock>();
+
 
             for (int i = 0; i < list.Count; ++i)
             {
                 var stub = new List<byte>();
                 stub.AddRange(BitConverter.GetBytes(SetBlock));
-                stub.AddRange(BitConverter.GetBytes(list[i].ID));
+                stub.AddRange(BitConverter.GetBytes(list[i].BlockID));
 
                 stub.AddRange(BitConverter.GetBytes(Push));
                 stub.AddRange(BitConverter.GetBytes(list[i].ShuffledID));
@@ -68,14 +70,14 @@ namespace Nasha.CLI.Core
                 stub.AddRange(BitConverter.GetBytes(Br));
                 try
                 {
-                    stub.AddRange(BitConverter.GetBytes(list[i + 1].ID));
+                    stub.AddRange(BitConverter.GetBytes(list[i + 1].BlockID));
                 }
                 catch 
                 {
-                    stub.AddRange(BitConverter.GetBytes(1337)); // Exit control flow.
+                    stub.AddRange(BitConverter.GetBytes(ExitBlock)); // Exit control flow.
                 }
 
-                blocks.Add(new OpcodesBlock(list[i].ID, stub.ToArray()));
+                blocks.Add(new OpcodesBlock(list[i].BlockID, stub.ToArray()));
             }
 
             arr.AddRange(BitConverter.GetBytes(Br));
@@ -86,7 +88,7 @@ namespace Nasha.CLI.Core
                 arr.AddRange(block.Content);
 
             arr.AddRange(BitConverter.GetBytes(SetBlock));
-            arr.AddRange(BitConverter.GetBytes(1337));
+            arr.AddRange(BitConverter.GetBytes(ExitBlock));
 
             arr.AddRange(BitConverter.GetBytes(Exit));
             arr.AddRange(BitConverter.GetBytes(Nothing));

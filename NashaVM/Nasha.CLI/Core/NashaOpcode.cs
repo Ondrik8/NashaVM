@@ -10,20 +10,22 @@ namespace Nasha.CLI.Core
     {
         public string Name { get; private set; }
         public int ID { get; private set; }
+        public int BlockID { get; private set; }
         public int ShuffledID { get; private set; }
 
         public NashaOpcode(int ID)
         {
             this.ID = ID;
             this.ShuffledID = NashaOpcodes.GenerateInteger();
+            this.BlockID = NashaOpcodes.GenerateBlockInteger();
         }
 
-        public NashaOpcode(string Name, int ID)
-        {
-            this.Name = Name;
-            this.ID = ID;
-            this.ShuffledID = NashaOpcodes.GenerateInteger();
-        }
+        //public NashaOpcode(string Name, int ID)
+        //{
+        //    this.Name = Name;
+        //    this.ID = ID;
+        //    this.ShuffledID = NashaOpcodes.GenerateInteger();
+        //}
     }
 
     public static class NashaOpcodes
@@ -49,6 +51,13 @@ namespace Nasha.CLI.Core
         public static NashaOpcode Ldftn = new NashaOpcode(18);
 
         private static int _generatorOffset = 0;
+        private static int _generatorBlockOffset = 0;
+
+        public static int GenerateBlockInteger()
+        {
+            var x = RandomNumbers(255);
+            return x[_generatorBlockOffset++];
+        }
 
         public static int GenerateInteger()
         {
